@@ -11,5 +11,5 @@ name = "vkpl-gui"
 path = "src/main.rs"
 
 [dependencies]
-iced = "0.14"
+iced = { version = "0.14", features = ["tokio"] }
 iced_exwlshell = { git = "https://github.com/waycrate/exwlshelleventloop.git", rev = "148bed154095b24fc0768fc06e47d7a8b6139953" }
