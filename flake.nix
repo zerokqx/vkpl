@@ -70,7 +70,7 @@
               pkg-config
               mpv
               ffmpeg
-              lua54
+              lua5_4
               qt6.qtdeclarative
               qt6.qtwayland
             ] ++ pkgs.lib.optionals stdenv.isLinux [ chromium ];
