@@ -1,7 +1,8 @@
 {
   description = "VKPL — VK Music terminal player";
 
-  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+  # 26.11 dropped x86_64-darwin; 26.05 retains every declared release target.
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
 
   outputs = { self, nixpkgs }:
     let
