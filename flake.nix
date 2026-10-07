@@ -70,6 +70,8 @@
               mpv
               ffmpeg
               lua54
+              qt6.qtdeclarative
+              qt6.qtwayland
             ] ++ pkgs.lib.optionals stdenv.isLinux [ chromium ];
           };
         });

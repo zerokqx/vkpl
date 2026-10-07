@@ -9,6 +9,8 @@
     mpv
     ffmpeg
     lua54
+    qt6.qtdeclarative
+    qt6.qtwayland
   ] ++ lib.optionals pkgs.stdenv.isLinux [ chromium ];
 
   scripts = {
@@ -18,6 +20,7 @@
     fmt.exec = "cargo fmt --all";
     test.exec = "cargo test --workspace --locked";
     run-app.exec = "cargo run -p vkpl --";
+    run-gui.exec = "qml gui/qml/Main.qml";
     package-local.exec = ''
       target="$(rustc -vV | sed -n 's/^host: //p')"
       cargo build --release --locked -p vkpl --target "$target"

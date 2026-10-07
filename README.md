@@ -43,7 +43,11 @@ nix build .#packages.aarch64-darwin.vkpl
 
 Пакет оборачивает `mpv` и `ffmpeg`, поэтому они доступны приложению автоматически. Для входа через браузер на Linux dev shell также содержит Chromium; на macOS передайте установленный браузер через `--browser`.
 
-Для разработки выполните `direnv allow`: [.envrc](.envrc) запустит `devenv shell`. Внутри доступны `build`, `check`, `lint`, `fmt`, `test`, `run-app`, `build-nix`, `run-nix` и `flake-check`.
+Для разработки выполните `direnv allow`: [.envrc](.envrc) запустит `devenv shell`. Внутри доступны `build`, `check`, `lint`, `fmt`, `test`, `run-app`, `run-gui`, `build-nix`, `run-nix` и `flake-check`.
+
+## QML overlay (prototype)
+
+`gui/qml/Main.qml` — первый GUI shell: раскрываемая сверху frameless-панель с пружинной анимацией. В devenv она открывается командой `run-gui`. Это fallback для X11 и композиторов без layer-shell; интеграция с VKPL backend и Wayland layer-shell добавляется следующим этапом.
 
 ## GitHub Releases
 
