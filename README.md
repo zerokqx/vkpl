@@ -43,11 +43,7 @@ nix build .#packages.aarch64-darwin.vkpl
 
 Пакет оборачивает `mpv` и `ffmpeg`, поэтому они доступны приложению автоматически. Для входа через браузер на Linux dev shell также содержит Chromium; на macOS передайте установленный браузер через `--browser`.
 
-Для разработки выполните `direnv allow`: [.envrc](.envrc) запустит `devenv shell`. Внутри доступны `build`, `check`, `lint`, `fmt`, `test`, `run-app`, `run-gui`, `build-nix`, `run-nix` и `flake-check`.
-
-## Wayland overlay
-
-`vkpl-gui` — Iced-клиент, создающий верхний Wayland layer-shell. Он открывается командой `run-gui` и требует композитор с протоколом `wlr-layer-shell` (Hyprland, Sway, River и совместимые).
+Для разработки выполните `direnv allow`: [.envrc](.envrc) запустит `devenv shell`. Внутри доступны `build`, `check`, `lint`, `fmt`, `test`, `run-app`, `build-nix`, `run-nix` и `flake-check`.
 
 ## GitHub Releases
 

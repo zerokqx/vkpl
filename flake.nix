@@ -71,7 +71,7 @@
               mpv
               ffmpeg
               lua5_4
-            ] ++ pkgs.lib.optionals stdenv.isLinux [ chromium libxkbcommon wayland vulkan-loader ];
+            ] ++ pkgs.lib.optionals stdenv.isLinux [ chromium ];
           };
         });
     };

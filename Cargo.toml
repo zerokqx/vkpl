@@ -1,5 +1,5 @@
 [workspace]
-members = ["crates/vk-music-core", "crates/vk-music", "crates/vkpl", "crates/vkpl-gui"]
+members = ["crates/vk-music-core", "crates/vk-music", "crates/vkpl"]
 resolver = "2"
 
 [workspace.package]
