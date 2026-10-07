@@ -1,0 +1,8 @@
+/target/
+/dist/
+/.env
+*.cookies
+session.json
+/result
+/.devenv/
+/.direnv/

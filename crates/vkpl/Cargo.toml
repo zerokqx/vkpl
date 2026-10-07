@@ -1,0 +1,28 @@
+[package]
+name = "vkpl"
+description = "VK Music terminal player"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+vk-music = { path = "../vk-music" }
+anyhow.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+tokio.workspace = true
+reqwest.workspace = true
+futures-util.workspace = true
+url.workspace = true
+ratatui = { version = "0.30.2", default-features = false, features = ["crossterm", "unstable-rendered-line-info"] }
+crossterm = { version = "0.29", features = ["event-stream"] }
+clap = { version = "4", features = ["derive"] }
+dirs = "6"
+directories = "5"
+mlua = { version = "0.11", features = ["lua54", "vendored"] }
+tempfile = "3"
+rand = "0.8"
+tokio-tungstenite = "0.28"
+
+zbus = { version = "5.19", default-features = false, features = ["tokio"] }
