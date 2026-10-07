@@ -1,0 +1,12 @@
+[package]
+name = "vk-music-core"
+description = "Transport-independent domain types and session handling for VK Music"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+serde.workspace = true
+serde_json.workspace = true
+thiserror = "2"

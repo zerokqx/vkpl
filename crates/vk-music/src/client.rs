@@ -1,11 +1,25 @@
-use crate::{auth::now, *};
+use crate::*;
 use reqwest::{cookie::Jar, header, redirect::Policy};
 use serde::de::DeserializeOwned;
 use serde_json::Value;
-use std::{sync::Arc, time::Duration};
+use std::{
+    sync::Arc,
+    time::{Duration, SystemTime, UNIX_EPOCH},
+};
 use tokio::sync::Mutex;
 
 const USER_AGENT: &str = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36";
+
+fn now() -> u64 {
+    SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .unwrap_or_default()
+        .as_secs()
+}
+
+fn transport(error: reqwest::Error) -> Error {
+    Error::Transport(error.without_url().to_string())
+}
 
 /// Clones share the connection pool, refresh lock and request throttle.
 #[derive(Clone)]
@@ -55,7 +69,7 @@ impl ClientBuilder {
     }
     pub fn build(self) -> Result<Client> {
         let jar = Arc::new(Jar::default());
-        for cookie in &self.session.cookies {
+        for cookie in self.session.stored_cookies() {
             cookie.validate()?;
             if !cookie.alive() {
                 continue;
@@ -79,7 +93,8 @@ impl ClientBuilder {
             .connect_timeout(Duration::from_secs(10))
             .redirect(Policy::none())
             .cookie_provider(jar)
-            .build()?;
+            .build()
+            .map_err(transport)?;
         Ok(Client {
             inner: Arc::new(Inner {
                 http,
@@ -115,11 +130,10 @@ impl Client {
 
     async fn token(&self, rejected: Option<&str>) -> Result<String> {
         let mut session = self.inner.session.lock().await;
-        let stale = session.access_token.is_empty()
-            || (session.expires_at > 0 && session.expires_at <= now() + 120)
-            || rejected.is_some_and(|token| token == session.access_token);
+        let stale = session.needs_token_refresh(now(), 120)
+            || rejected.is_some_and(|token| token == session.access_token());
         if !stale {
-            return Ok(session.access_token.clone());
+            return Ok(session.access_token().into());
         }
         if !session.can_refresh() {
             return Err(Error::Unauthorized);
@@ -132,21 +146,26 @@ impl Client {
             .header(header::REFERER, "https://vk.ru/")
             .form(&[("version", "1"), ("app_id", self.inner.app_id.as_str())])
             .send()
-            .await?;
+            .await
+            .map_err(transport)?;
         if response.status().is_redirection() {
             return Err(Error::Unauthorized);
         }
-        let value: Value = response.error_for_status()?.json().await?;
+        let value: Value = response
+            .error_for_status()
+            .map_err(transport)?
+            .json()
+            .await
+            .map_err(transport)?;
         let data = &value["data"];
         let token = data["access_token"]
             .as_str()
             .filter(|s| !s.is_empty())
             .ok_or(Error::Unauthorized)?;
-        session.access_token = token.into();
         // The web endpoint returns an absolute UNIX timestamp, not a TTL.
-        session.expires_at = data["expires"].as_u64().unwrap_or(0);
+        session.set_access_token(token, data["expires"].as_u64().unwrap_or(0));
         session.user_id = data["user_id"].as_i64().or(session.user_id);
-        Ok(session.access_token.clone())
+        Ok(session.access_token().into())
     }
 
     async fn throttle(&self) {
@@ -212,7 +231,8 @@ impl Client {
                 .header(header::REFERER, "https://vk.ru/")
                 .form(&form)
                 .send()
-                .await?;
+                .await
+                .map_err(transport)?;
             let status = response.status();
             if status.is_redirection() || status == reqwest::StatusCode::UNAUTHORIZED {
                 return Err(Error::Unauthorized);
@@ -225,7 +245,12 @@ impl Client {
                 }
                 return Err(Error::RateLimited);
             }
-            let value: Value = response.error_for_status()?.json().await?;
+            let value: Value = response
+                .error_for_status()
+                .map_err(transport)?
+                .json()
+                .await
+                .map_err(transport)?;
             if let Some(error) = value.get("error") {
                 let code = error["error_code"].as_i64().unwrap_or(-1);
                 if code == 5 && read && !refreshed {
@@ -563,7 +588,7 @@ mod tests {
         ])
         .await;
         let mut session = web_session();
-        session.access_token = "old".into();
+        session.set_access_token("old", now() + 3600);
         let page = local(session, base)
             .search("Кино & рок", 0, 20)
             .await

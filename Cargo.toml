@@ -1,5 +1,5 @@
 [workspace]
-members = ["crates/vk-music", "crates/vkpl"]
+members = ["crates/vk-music-core", "crates/vk-music", "crates/vkpl"]
 resolver = "2"
 
 [workspace.package]
@@ -20,4 +20,3 @@ url = "2"
 [profile.release]
 lto = "thin"
 strip = true
-

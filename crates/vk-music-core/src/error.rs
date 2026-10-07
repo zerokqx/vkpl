@@ -13,17 +13,11 @@ pub enum Error {
     #[error("Ошибка VK API: код {code}")]
     Api { code: i64 },
     #[error("Ошибка сети: {0}")]
-    Transport(#[source] reqwest::Error),
+    Transport(String),
     #[error("Неожиданный формат ответа VK: {0}")]
     Protocol(String),
     #[error("Неверный параметр: {0}")]
     InvalidInput(String),
     #[error("Трек недоступен для воспроизведения в этой сессии")]
     Unavailable,
-}
-
-impl From<reqwest::Error> for Error {
-    fn from(value: reqwest::Error) -> Self {
-        Self::Transport(value.without_url())
-    }
 }

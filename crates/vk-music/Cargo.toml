@@ -13,4 +13,4 @@ tokio.workspace = true
 reqwest.workspace = true
 url.workspace = true
 thiserror = "2"
-
+vk-music-core = { path = "../vk-music-core", version = "0.1.0" }

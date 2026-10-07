@@ -35,7 +35,7 @@ impl Cookie {
             .iter()
             .any(|base| domain == *base || domain.ends_with(&format!(".{base}")))
     }
-    pub(crate) fn validate(&self) -> Result<()> {
+    pub fn validate(&self) -> Result<()> {
         if !self.is_vk()
             || self.name.is_empty()
             || self.name.contains([';', '=', '\r', '\n', ' '])
@@ -47,7 +47,7 @@ impl Cookie {
         }
         Ok(())
     }
-    pub(crate) fn alive(&self) -> bool {
+    pub fn alive(&self) -> bool {
         self.expires.is_none_or(|v| v <= 0.0 || v > now() as f64)
     }
 }
@@ -75,6 +75,23 @@ impl fmt::Debug for Session {
 }
 
 impl Session {
+    /// Cookies retained for a VK web session. They may contain credentials.
+    pub fn stored_cookies(&self) -> &[Cookie] {
+        &self.cookies
+    }
+    /// Returns the cached short-lived web token, if any. Avoid logging it.
+    pub fn access_token(&self) -> &str {
+        &self.access_token
+    }
+    pub fn needs_token_refresh(&self, now: u64, grace: u64) -> bool {
+        self.access_token.is_empty()
+            || (self.expires_at > 0 && self.expires_at <= now.saturating_add(grace))
+    }
+    /// Updates transport-issued credentials after a successful refresh.
+    pub fn set_access_token(&mut self, token: impl Into<String>, expires_at: u64) {
+        self.access_token = token.into();
+        self.expires_at = expires_at;
+    }
     pub fn token(token: impl Into<String>) -> Result<Self> {
         let token = token.into().trim().to_owned();
         if token.is_empty() || token.chars().any(char::is_whitespace) {

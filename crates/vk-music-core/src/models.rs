@@ -117,7 +117,8 @@ impl<T> Page<T> {
             next: None,
         }
     }
-    pub(crate) fn with_pagination(mut self, offset: u64, requested: u16) -> Self {
+    #[doc(hidden)]
+    pub fn with_pagination(mut self, offset: u64, requested: u16) -> Self {
         // VK can omit removed/inaccessible records from items while still consuming their offsets.
         let next = offset.saturating_add(u64::from(requested));
         self.next = (requested > 0 && next < self.count).then_some(next);
