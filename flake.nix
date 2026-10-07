@@ -34,7 +34,7 @@
             nativeBuildInputs = [ pkgs.makeWrapper pkgs.pkg-config ];
 
             postInstall = ''
-              wrapProgram $out/bin/vkpl \\
+              wrapProgram $out/bin/vkpl
                 --prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.mpv pkgs.ffmpeg ]}
             '';
 
