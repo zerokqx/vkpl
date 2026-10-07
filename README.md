@@ -45,9 +45,9 @@ nix build .#packages.aarch64-darwin.vkpl
 
 Для разработки выполните `direnv allow`: [.envrc](.envrc) запустит `devenv shell`. Внутри доступны `build`, `check`, `lint`, `fmt`, `test`, `run-app`, `run-gui`, `build-nix`, `run-nix` и `flake-check`.
 
-## QML overlay (prototype)
+## Wayland overlay
 
-`gui/qml/Main.qml` — первый GUI shell: раскрываемая сверху frameless-панель с пружинной анимацией. В devenv она открывается командой `run-gui`. Это fallback для X11 и композиторов без layer-shell; интеграция с VKPL backend и Wayland layer-shell добавляется следующим этапом.
+`vkpl-gui` — Iced-клиент, создающий верхний Wayland layer-shell. Он открывается командой `run-gui` и требует композитор с протоколом `wlr-layer-shell` (Hyprland, Sway, River и совместимые).
 
 ## GitHub Releases
 
