@@ -18,7 +18,10 @@
     fmt.exec = "cargo fmt --all";
     test.exec = "cargo test --workspace --locked";
     run-app.exec = "cargo run -p vkpl --";
-    run-gui.exec = "cargo run -p vkpl-gui --";
+    run-gui.exec = ''
+      export LD_LIBRARY_PATH="${lib.makeLibraryPath [ pkgs.wayland pkgs.libxkbcommon pkgs.vulkan-loader ]}''${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+      exec cargo run -p vkpl-gui --
+    '';
     package-local.exec = ''
       target="$(rustc -vV | sed -n 's/^host: //p')"
       cargo build --release --locked -p vkpl --target "$target"
