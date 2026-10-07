@@ -20,7 +20,10 @@
     fmt.exec = "cargo fmt --all";
     test.exec = "cargo test --workspace --locked";
     run-app.exec = "cargo run -p vkpl --";
-    run-gui.exec = "qml gui/qml/Main.qml";
+    run-gui.exec = ''
+      export QML2_IMPORT_PATH="${pkgs.qt6.qtdeclarative}/lib/qt-6/qml"
+      exec qml gui/qml/Main.qml
+    '';
     package-local.exec = ''
       target="$(rustc -vV | sed -n 's/^host: //p')"
       cargo build --release --locked -p vkpl --target "$target"
