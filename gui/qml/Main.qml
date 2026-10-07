@@ -54,7 +54,9 @@ ApplicationWindow {
                 Text { text: "emokid"; color: "#f49ed9"; font.pixelSize: 19 }
                 Slider { Layout.fillWidth: true; value: 0.24 }
                 RowLayout { spacing: 18
-                    Button { text: "‹‹" }; Button { text: "▶"; font.pixelSize: 21 }; Button { text: "››" }
+                    Button { text: "‹‹" }
+                    Button { text: "▶"; font.pixelSize: 21 }
+                    Button { text: "››" }
                     Text { text: "0:38 / 2:46"; color: "#aab4d3" }
                 }
             }
